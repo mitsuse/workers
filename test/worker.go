@@ -3,7 +3,7 @@ package test
 import (
 	"errors"
 
-	"github.com/mitsuse/workers/workers"
+	"github.com/mitsuse/workers"
 	"github.com/nlopes/slack"
 )
 
