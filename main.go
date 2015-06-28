@@ -4,21 +4,31 @@ import (
 	"os"
 
 	"github.com/carlescere/scheduler"
+	"github.com/mitsuse/workers/workers"
 	"github.com/mitsuse/workers/workers/test"
 )
 
 func main() {
-	testWorker := test.New(
-		"test worker",
-		os.Getenv("SLACK_TOKEN"),
-		os.Getenv("SLACK_CHANNEL_TEST"),
+	run(
+		test.New(
+			"test worker",
+			os.Getenv("SLACK_TOKEN"),
+			os.Getenv("SLACK_CHANNEL_TEST"),
+		),
+		scheduler.Every(10).Seconds(),
 	)
-	scheduler.Every(10).Seconds().Run(testWorker.Work)
 
-	sleep()
+	wait()
 }
 
-func sleep() {
+func run(worker workers.Worker, job *scheduler.Job) {
+	if _, err := job.Run(worker.Work); err != nil {
+		workers.Log(worker, err)
+		return
+	}
+}
+
+func wait() {
 	c := make(chan struct{})
 	<-c
 }
