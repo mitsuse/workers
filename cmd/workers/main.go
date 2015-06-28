@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"github.com/carlescere/scheduler"
-	"github.com/mitsuse/workers/workers"
-	"github.com/mitsuse/workers/workers/test"
+	"github.com/mitsuse/workers"
+	"github.com/mitsuse/workers/test"
 )
 
 func main() {
