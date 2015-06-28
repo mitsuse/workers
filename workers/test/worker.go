@@ -2,6 +2,8 @@ package test
 
 import (
 	"errors"
+	"fmt"
+	"os"
 
 	"github.com/mitsuse/workers/workers"
 	"github.com/nlopes/slack"
@@ -26,7 +28,7 @@ func New(name, token, channelName string) workers.Worker {
 func (w *workerImpl) Work() {
 	channel, err := w.findChannel(w.channelName)
 	if err != nil {
-		println(err.Error())
+		fmt.Fprintf(os.Stderr, "%s: %s", w.name, err)
 		return
 	}
 
@@ -36,7 +38,7 @@ func (w *workerImpl) Work() {
 
 	w.client.PostMessage(channel.Id, message.Text, message)
 	if err != nil {
-		println(err.Error())
+		fmt.Fprintf(os.Stderr, "%s: %s", w.name, err)
 		return
 	}
 }
