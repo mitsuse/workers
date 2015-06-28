@@ -23,10 +23,14 @@ func New(name, token, channelName string) workers.Worker {
 	return w
 }
 
+func (w *workerImpl) Name() string {
+	return w.name
+}
+
 func (w *workerImpl) Work() {
 	channel, err := w.findChannel(w.channelName)
 	if err != nil {
-		println(err.Error())
+		workers.Log(w, err)
 		return
 	}
 
@@ -36,7 +40,7 @@ func (w *workerImpl) Work() {
 
 	w.client.PostMessage(channel.Id, message.Text, message)
 	if err != nil {
-		println(err.Error())
+		workers.Log(w, err)
 		return
 	}
 }
