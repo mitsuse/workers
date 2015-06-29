@@ -14,7 +14,7 @@ func main() {
 			"GitHub Star Collector",
 			os.Getenv("GITHUB_TOKEN"),
 		),
-		scheduler.Every().Day().At(os.Getenv("TIME_GITHUB_STAR_COLLECTOR")),
+		scheduler.Every(15).Minutes(),
 	)
 
 	wait()
