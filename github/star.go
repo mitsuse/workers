@@ -99,7 +99,7 @@ func (w *startCollector) watchEvents(
 			}
 
 			for _, event := range eventSeq {
-				if last.Sub(*event.CreatedAt) > 0 {
+				if last.Unix()-(*event.CreatedAt).Unix() > 0 {
 					close(responseChan)
 					return
 				}
