@@ -91,7 +91,7 @@ func (w *startCollector) Work() {
 		)
 		w.notifier.Notify(text)
 
-		if last.Unix()-(*r.Event.CreatedAt).Unix() > 0 {
+		if last.Unix()-(*r.Event.CreatedAt).Unix() <= 0 {
 			last = *r.Event.CreatedAt
 		}
 	}
