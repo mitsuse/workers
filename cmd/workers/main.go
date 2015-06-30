@@ -5,17 +5,22 @@ import (
 
 	"github.com/carlescere/scheduler"
 	"github.com/mitsuse/workers"
-	"github.com/mitsuse/workers/test"
+	"github.com/mitsuse/workers/github"
+	"github.com/mitsuse/workers/notifiers"
 )
 
 func main() {
 	run(
-		test.New(
-			"test worker",
-			os.Getenv("SLACK_TOKEN"),
-			os.Getenv("SLACK_CHANNEL_TEST"),
+		github.NewStarCollector(
+			"GitHub Star Collector",
+			os.Getenv("GITHUB_TOKEN"),
+			notifiers.New(
+				"Star Collector",
+				os.Getenv("SLACK_TOKEN"),
+				os.Getenv("SLACK_CHANNEL_GITHUB_STARRED"),
+			),
 		),
-		scheduler.Every(10).Seconds(),
+		scheduler.Every(10).Minutes(),
 	)
 
 	wait()
