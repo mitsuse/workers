@@ -131,7 +131,7 @@ func (w *startCollector) watchEvents(
 		for page := 0; page <= lastPage; page++ {
 			eventSeq, _, err := w.getEvents(loginName, page)
 			if err != nil {
-				responseChan <- &EventResponse{event: nil, err: err}
+				responseChan <- &EventResponse{Err: err}
 				close(responseChan)
 				return
 			}
@@ -145,7 +145,7 @@ func (w *startCollector) watchEvents(
 				if *event.Type != "WatchEvent" {
 					continue
 				}
-				responseChan <- &EventResponse{event: &event, err: nil}
+				responseChan <- &EventResponse{Event: event, Err: nil}
 			}
 		}
 
@@ -175,14 +175,6 @@ func (w *startCollector) getEvents(
 }
 
 type EventResponse struct {
-	event *api.Event
-	err   error
-}
-
-func (r *EventResponse) Event() *api.Event {
-	return r.event
-}
-
-func (r *EventResponse) Error() error {
-	return r.err
+	Event api.Event
+	Err   error
 }
