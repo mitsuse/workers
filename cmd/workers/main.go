@@ -20,7 +20,7 @@ func main() {
 				os.Getenv("SLACK_CHANNEL_GITHUB_STARRED"),
 			),
 		),
-		scheduler.Every(15).Minutes(),
+		scheduler.Every(10).Minutes(),
 	)
 
 	wait()
