@@ -18,6 +18,8 @@ type startCollector struct {
 	notifier  notifiers.Notifier
 	last      time.Time
 	firstWork bool
+	workChan  chan struct{}
+	passChan  chan struct{}
 }
 
 func NewStarCollector(name, token string, notifier notifiers.Notifier) workers.Worker {
@@ -33,7 +35,11 @@ func NewStarCollector(name, token string, notifier notifiers.Notifier) workers.W
 		),
 		notifier:  notifier,
 		firstWork: true,
+		workChan:  make(chan struct{}, 1),
+		passChan:  make(chan struct{}, 1),
 	}
+
+	w.workChan <- struct{}{}
 
 	return w
 }
@@ -42,10 +48,35 @@ func (w *startCollector) Name() string {
 	return w.name
 }
 
+func (w *startCollector) isReady() bool {
+	var ready bool
+
+	select {
+	case <-w.workChan:
+		ready = true
+	case <-w.passChan:
+		ready = false
+	}
+
+	w.passChan <- struct{}{}
+
+	return ready
+}
+
+func (w *startCollector) prepareNext() {
+	<-w.passChan
+	w.workChan <- struct{}{}
+}
+
 func (w *startCollector) Work() {
-	// TODO: Exclusive access.
+	if !w.isReady() {
+		return
+	}
+
 	name, err := w.getLoginName()
 	if err != nil {
+		w.prepareNext()
+
 		workers.Log(w, err)
 		return
 	}
@@ -62,6 +93,8 @@ func (w *startCollector) Work() {
 		)
 		w.notifier.Notify(text)
 	}
+
+	w.prepareNext()
 }
 
 func (w *startCollector) getLast() time.Time {
