@@ -90,13 +90,20 @@ func (w *startCollector) Work() {
 			"https://github.com/"+*r.Event.Repo.Name,
 		)
 		w.notifier.Notify(text)
+
+		if last.Unix()-(*r.Event.CreatedAt).Unix() > 0 {
+			last = *r.Event.CreatedAt
+		}
 	}
+
+	w.last = last
 
 	w.prepareNext()
 }
 
 func (w *startCollector) getLast() time.Time {
 	if w.firstWork {
+		w.firstWork = false
 		w.last = time.Now()
 	}
 
