@@ -85,11 +85,9 @@ func (w *startCollector) Work() {
 
 	for r := range w.watchEvents(name, last) {
 		text := fmt.Sprintf(
-			"%s starred %s/%s - %s",
-			*r.event.Actor.Login,
-			*r.event.Repo.Owner.Login,
-			*r.event.Repo.Name,
-			*r.event.Repo.HTMLURL,
+			"%s starred: %s",
+			*r.Event.Actor.Login,
+			"https://github.com/"+*r.Event.Repo.Name,
 		)
 		w.notifier.Notify(text)
 	}
