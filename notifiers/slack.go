@@ -51,7 +51,7 @@ func (n *slackNotifier) findChannel(name string) (channel slack.Channel, err err
 	}
 
 	for _, c := range channelSeq {
-		if c.Name == "test" {
+		if c.Name == n.channelName {
 			channel = c
 			return channel, nil
 		}
