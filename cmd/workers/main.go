@@ -17,7 +17,7 @@ func main() {
 			notifiers.New(
 				"Star Collector",
 				os.Getenv("SLACK_TOKEN"),
-				os.Getenv("SLACK_CHANNEL_GITHUB_STARREDL"),
+				os.Getenv("SLACK_CHANNEL_GITHUB_STARRED"),
 			),
 		),
 		scheduler.Every(15).Minutes(),
