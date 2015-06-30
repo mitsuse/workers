@@ -6,6 +6,7 @@ import (
 	"github.com/carlescere/scheduler"
 	"github.com/mitsuse/workers"
 	"github.com/mitsuse/workers/github"
+	"github.com/mitsuse/workers/notifiers"
 )
 
 func main() {
@@ -13,6 +14,11 @@ func main() {
 		github.NewStarCollector(
 			"GitHub Star Collector",
 			os.Getenv("GITHUB_TOKEN"),
+			notifiers.New(
+				"Star Collector",
+				os.Getenv("SLACK_TOKEN"),
+				os.Getenv("SLACK_CHANNEL_GITHUB_STARREDL"),
+			),
 		),
 		scheduler.Every(15).Minutes(),
 	)

@@ -1,6 +1,7 @@
 package github
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -8,16 +9,18 @@ import (
 
 	api "github.com/google/go-github/github"
 	"github.com/mitsuse/workers"
+	"github.com/mitsuse/workers/notifiers"
 )
 
 type startCollector struct {
 	name      string
 	client    *api.Client
+	notifier  notifiers.Notifier
 	last      time.Time
 	firstWork bool
 }
 
-func NewStarCollector(name, token string) workers.Worker {
+func NewStarCollector(name, token string, notifier notifiers.Notifier) workers.Worker {
 	w := &startCollector{
 		name: name,
 		client: api.NewClient(
@@ -28,6 +31,7 @@ func NewStarCollector(name, token string) workers.Worker {
 				),
 			),
 		),
+		notifier:  notifier,
 		firstWork: true,
 	}
 
@@ -49,8 +53,14 @@ func (w *startCollector) Work() {
 	last := w.getLast()
 
 	for r := range w.watchEvents(name, last) {
-		// TODO: Notify.
-		_ = r
+		text := fmt.Sprintf(
+			"%s starred %s/%s - %s",
+			*r.event.Actor.Login,
+			*r.event.Repo.Owner.Login,
+			*r.event.Repo.Name,
+			*r.event.Repo.HTMLURL,
+		)
+		w.notifier.Notify(text)
 	}
 }
 
